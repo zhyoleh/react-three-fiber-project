@@ -10,7 +10,7 @@ import glsl from "babel-plugin-glsl/macro";
 import { Suspense, useEffect, useRef } from "react";
 import * as THREE from "three";
 import backgroundImage from "./images/artboard.png";
-// import { LinearMipMapLinearFilter, NearestFilter, RepeatWrapping } from "three";
+
 
 const ExplosionMaterial = shaderMaterial(
   //Uniform
@@ -43,10 +43,8 @@ const ExplosionMaterial = shaderMaterial(
     varying vec2 vUv;
 
     void main(){
-      float strength = distance(sin(vUv + uTime), vec2(0.5));
 
-      // float strength = distance(uCustomUv, vec2(0.5));
-
+      float strength = distance(vUv, uCustomUv);
 
       if( strength > 0.1){
         strength = 1.0;
@@ -91,11 +89,7 @@ function BackgroundPlane() {
 
   return (
     <>
-      <mesh 
-      onPointerMove={(e) => {
-        customUv = e.uv 
-        console.log('custom', ref.current.uCustomUv)}}
-        >
+      <mesh onPointerMove={(e) => customUv = e.uv }>
         <planeBufferGeometry args={[5, 5, 10, 10]} />
         <explosionMaterial ref={ref} uTexture={texture} />
       </mesh>
