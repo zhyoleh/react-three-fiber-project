@@ -47,12 +47,13 @@ const ExplosionMaterial = shaderMaterial(
 
       float strength = distance(vUv, uCustomUv) / uCreationTimer;
 
+
       if( strength > 0.1){
         strength = 1.0;
       } else if( strength < 0.1){
         strength = 0.0; //this is the circle
       }
-      vec3 texture = (texture2D(uTexture, (vUv * 50.0)).rgb) * strength ;
+      vec3 texture = (texture2D(uTexture, (vUv * 50.0)).rgb) * strength;
 
       gl_FragColor = vec4(texture, 1.0);
     }
@@ -73,10 +74,6 @@ function BackgroundPlane() {
 
   // let customUv = new THREE.Vector2(1, 1);
 
-  const [creationTimer, setCreationTimer] = useState(0);
-
-  // let creationTimer = 1;
-
   useFrame(({ clock }) => {
     ref.current.uTime = clock.getElapsedTime();
     // ref.current.uCustomUv = customUv;
@@ -89,23 +86,33 @@ function BackgroundPlane() {
     // ref.current.wireframe = true
   }, []);
 
-  const [playCreation, setPlayCreation] = useState(false)
+  const [creationTimer, setCreationTimer] = useState(0);
+  const [playCreation, setPlayCreation] = useState(false);
+  const [playDecay, setPlayDecay] = useState(false);
 
   useEffect(() => {
-    if ( playCreation === true){
+    if (playCreation === true) {
       const intervalId = setInterval(() => {
         if (creationTimer > 3) {
-          // creationTimer = 1;
-          setCreationTimer(0)
+          setCreationTimer(0);
         } else {
-          // creationTimer += 1;
-          setCreationTimer( ( creationTimer) => creationTimer + 1)
+          setCreationTimer((creationTimer) => creationTimer + 1);
         }
-        console.log("timer", creationTimer);
+        console.log("creation timer", creationTimer);
+      }, 1000);
+      return () => clearInterval(intervalId);
+    } else if (playDecay === true) {
+      const intervalId = setInterval(() => {
+        if (creationTimer < 1) {
+          setPlayDecay(false);
+        } else {
+          setCreationTimer((creationTimer) => creationTimer - 1);
+        }
+        console.log("decay timer", creationTimer);
       }, 1000);
       return () => clearInterval(intervalId);
     }
-  }, [playCreation, creationTimer]);
+  }, [playCreation, creationTimer, playDecay]);
 
   return (
     <>
@@ -114,21 +121,19 @@ function BackgroundPlane() {
           // (customUv = e.uv)
           ref.current.uCustomUv = e.uv;
         }}
-        onPointerDown={ () => {
-          setPlayCreation(true)
+        onPointerDown={() => {
+          setPlayCreation(true);
+          setPlayDecay(false);
         }}
-        onPointerUp={ () => {
-          setPlayCreation(false)
+        onPointerUp={() => {
+          setPlayCreation(false);
+          setPlayDecay(true);
         }}
-        // onClick={() => {
-          
-        // }}
       >
         <planeBufferGeometry args={[5, 5, 50, 50]} />
         <explosionMaterial
           ref={ref}
           uTexture={texture}
-          // uVisible={visible}
           uCreationTimer={creationTimer}
         />
       </mesh>
