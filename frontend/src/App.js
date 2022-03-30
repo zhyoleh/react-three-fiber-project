@@ -62,13 +62,14 @@ const ExplosionMaterial = shaderMaterial(
 
       float strengths[50];
       
-      strengths[49] = (distance(vec2(vUv.x, vUv.y), vec2(uPositionCords[49].x, uPositionCords[49].y)) / uCreationTimer) * 0.2;
+      strengths[49] = (distance(vec2(vUv.x, vUv.y), vec2(uPositionCords[49].x, uPositionCords[49].y)) / uCreationTimer) * 0.5;
 
-      float randomPoint = random(vUv) * 0.1;
 
-      if( strengths[49] > randomPoint){
+      // float randomPoint = random(vUv) * 0.1;
+
+      if( strengths[49] > 0.1){
         strengths[49] = 1.0;
-      } else if( strengths[49] < randomPoint){
+      } else if( strengths[49] < 0.1){
         strengths[49] = 0.0; //this is the circle
       }
 
@@ -81,9 +82,9 @@ const ExplosionMaterial = shaderMaterial(
 
         strengths[i] = stem;
         
-        if( strengths[i] > randomPoint){
+        if( strengths[i] > 0.1){
           strengths[i] = 1.0;
-        } else if( strengths[i] < randomPoint){
+        } else if( strengths[i] < 0.1){
           strengths[i] = 0.0; //this is the circle
         }
       }
@@ -115,8 +116,8 @@ function BackgroundPlane() {
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(50, 50);
 
-
   const [creationTimer, setCreationTimer] = useState(0);
+  const [playGrow, setPlayGrow] = useState(false);
   const [playDecay, setPlayDecay] = useState(false);
   const [positionCord, setPositionCord] = useState(new THREE.Vector2(0.0, 0.0));
   const [positionCords, setPositionCords] = useState([
@@ -173,8 +174,14 @@ function BackgroundPlane() {
   ]);
 
   useEffect(() => {
-    if (playDecay === true) {
-      const intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
+      if (playGrow === true && creationTimer < 1) {
+        setCreationTimer(() => creationTimer + 0.01);
+      } else if (creationTimer > 1) {
+        setPlayDecay(true);
+        setPlayGrow(false);
+      }
+      if (playDecay === true) {
         if (creationTimer < 0.1) {
           setCreationTimer(0);
           setPositionCords(() => [
@@ -233,22 +240,33 @@ function BackgroundPlane() {
         } else {
           setCreationTimer((creationTimer) => creationTimer - 0.1);
         }
-        console.log("decay timer", creationTimer);
-      }, 1000);
-      return () => clearInterval(intervalId);
-    }
-  }, [playDecay, creationTimer, positionCords, positionCord]);
+      }
+      console.log("decay timer", creationTimer);
+      console.log("playgrow", playGrow);
+    }, 100);
+    return () => clearInterval(intervalId);
+  }, [playDecay, creationTimer, positionCords, positionCord, playGrow]);
 
   return (
     <>
       <mesh
         onPointerMove={(e) => {
           setCreationTimer(() => creationTimer + 0.01);
+          setPlayGrow(true);
           setPositionCords([...positionCords.slice(1)]);
           setPositionCords((positionCords) => [...positionCords, e.uv]);
+
+          // console.log('e', e.unprojectedPoint);
+          // console.log('e', e.spaceX);
+          // console.log('e', e.ray.direction);
+          // console.log('e', e.point);
+          // console.log('e', e.movementY);
+          // console.log('e', e.movementX);
+          // console.log('e',e.intersections[0].point);
         }}
         onAfterRender={() => {
-          setPlayDecay(true);
+          // setPlayGrow(true)
+          // setPlayDecay(true);
         }}
       >
         <planeBufferGeometry args={[5, 5, 50, 50]} />
