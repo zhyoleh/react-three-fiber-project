@@ -17,7 +17,6 @@ const ExplosionMaterial = shaderMaterial(
     uTime: 0.0,
     uColor: new THREE.Color(0.0, 0.0, 0.0),
     uTexture: new THREE.Texture(),
-    // uCustomUv: new THREE.Vector2(),
     uCreationTimer: 0.0,
     uPositionCords: [],
   },
@@ -41,7 +40,6 @@ const ExplosionMaterial = shaderMaterial(
 
     uniform float uTime;
     uniform sampler2D uTexture;
-    // uniform vec2 uCustomUv;
     uniform float uCreationTimer;
     uniform vec2 uPositionCords[50];
 
@@ -64,7 +62,7 @@ const ExplosionMaterial = shaderMaterial(
 
       float strengths[50];
       
-      strengths[49] = (distance(vec2(vUv.x, vUv.y), vec2(uPositionCords[49].x, uPositionCords[49].y)) / uCreationTimer) * 0.5;
+      strengths[49] = (distance(vec2(vUv.x, vUv.y), vec2(uPositionCords[49].x, uPositionCords[49].y)) / uCreationTimer) * 0.2;
 
       float randomPoint = random(vUv) * 0.1;
 
@@ -76,8 +74,10 @@ const ExplosionMaterial = shaderMaterial(
 
       for( int i = 0; i < 49; i++)
       {
+        float timer = uCreationTimer;
+
         vec2 rotatedUCustomUv = rotate(vUv, PI , uPositionCords[i]);
-        float stem = distance(vec2(rotatedUCustomUv.x, (rotatedUCustomUv.y)), vec2(uPositionCords[i].x, uPositionCords[i].y)) / uCreationTimer ;
+        float stem = distance(vec2(rotatedUCustomUv.x, (rotatedUCustomUv.y)), vec2(uPositionCords[i].x, uPositionCords[i].y)) / timer;
 
         strengths[i] = stem;
         
