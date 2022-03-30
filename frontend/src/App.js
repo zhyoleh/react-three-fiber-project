@@ -36,7 +36,7 @@ const ExplosionMaterial = shaderMaterial(
     uniform float uTime;
     uniform sampler2D uTexture;
     uniform float uCreationTimer;
-    uniform vec3 uPositionCords[50];
+    uniform vec3 uPositionCords[200];
 
     varying vec2 vUv;
 
@@ -45,39 +45,16 @@ const ExplosionMaterial = shaderMaterial(
       return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
     }
 
-    // vec2 rotate(vec2 uv, float rotation, vec2 mid)
-    // {
-    //   return vec2(
-    //     cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x,
-    //     cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y
-    //   );
-    // }
-
     void main(){
 
-      float strengths[50];
-      
-      //ellipse
-      // strengths[49] = (distance(vec2(vUv.x, vUv.y), vec2(uPositionCords[49].x, uPositionCords[49].y)) / uCreationTimer) * 0.5;
+      float strengths[200];
+      int newArrayLength = strengths.length();
 
-
-      // // float randomPoint = random(vUv) * 0.1;
-
-      // if( strengths[49] > 0.1){
-      //   strengths[49] = 1.0;
-      // } else if( strengths[49] < 0.1){
-      //   strengths[49] = 0.0; //this is the circle
-      // }
-      // for( int i = 0; i < 49; i++)
-      for( int i = 0; i < 50; i++)
+      for( int i = 0; i < newArrayLength; i++)
       {
-        // vec2 rotatedUCustomUv = rotate(vUv, PI , uPositionCords[i]);
-        float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 2.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
+        float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 5.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
 
         strengths[i] = stem / uPositionCords[i].z;
-
-        // strengths[i] = stem ;
-
 
         if( strengths[i] > 0.1){
           strengths[i] = 1.0;
@@ -86,7 +63,6 @@ const ExplosionMaterial = shaderMaterial(
         }
       }
 
-      int newArrayLength = strengths.length();
       vec3 texture = (texture2D(uTexture, (vUv * 100.0)).rgb);
       for( int i = 0; i < newArrayLength; i++)
       {
@@ -170,13 +146,163 @@ function BackgroundPlane() {
     positionCord,
     positionCord,
     positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
+    positionCord,
   ]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (playGrow === true && creationTimer < 1) {
         setCreationTimer(() => creationTimer + 0.1);
-        positionCords[49].z += 0.1;
+        positionCords[199].z += 0.1;
       } else if (creationTimer > 1) {
         setPlayDecay(true);
         setPlayGrow(false);
@@ -196,8 +322,8 @@ function BackgroundPlane() {
           setCreationTimer(0);
         }
       }
-      console.log("creation timer", creationTimer);
-    }, 1000);
+      // console.log("creation timer", creationTimer);
+    }, 100);
     return () => clearInterval(intervalId);
   }, [playDecay, creationTimer, positionCords, positionCord, playGrow]);
 
@@ -214,7 +340,7 @@ function BackgroundPlane() {
           setPositionCords((positionCords) => [...positionCords, positionCord]);
         }}
       >
-        <planeBufferGeometry args={[20, 20, 100, 100]} />
+        <planeBufferGeometry args={[20, 20, 50, 50]} />
         <explosionMaterial
           uTexture={texture}
           uCreationTimer={creationTimer}
