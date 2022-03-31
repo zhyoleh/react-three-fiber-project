@@ -1,6 +1,9 @@
 import "./canvas/canvas.css";
-import { Canvas, extend } from "@react-three/fiber";
-import { OrbitControls, shaderMaterial, Stats, useTexture } from "@react-three/drei";
+import { Canvas, extend, useFrame } from "@react-three/fiber";
+import {
+  shaderMaterial,
+  useTexture,
+} from "@react-three/drei";
 import glsl from "babel-plugin-glsl/macro";
 import { Suspense, useEffect, useState } from "react";
 import * as THREE from "three";
@@ -52,9 +55,9 @@ const ExplosionMaterial = shaderMaterial(
 
       for( int i = 0; i < newArrayLength; i++)
       {
-        float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 5.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
+        float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 4.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
 
-        strengths[i] = stem / uPositionCords[i].z;
+        strengths[i] = stem / abs(uPositionCords[i].z);
 
         if( strengths[i] > 0.1){
           strengths[i] = 1.0;
@@ -298,30 +301,40 @@ function BackgroundPlane() {
     positionCord,
   ]);
 
+  useFrame(() => {
+    positionCords.forEach((cord) => {
+      if (cord.z < 0.2) {
+        cord.z = 0;
+      } else {
+        cord.z -= 0.001;
+      }
+    });
+  });
+
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (playGrow === true && creationTimer < 1) {
+      if (playGrow === true) {
         setCreationTimer(() => creationTimer + 0.1);
-        positionCords[199].z += 0.1;
-      } else if (creationTimer > 1) {
-        setPlayDecay(true);
-        setPlayGrow(false);
-      }
-      if (playDecay === true) {
-        if (creationTimer > 0.1) {
-          setCreationTimer((creationTimer) => creationTimer - 0.1);
-          positionCords.forEach((cord) => {
-            if (cord.z < 0.1) {
-              cord.z = 0;
-            } else {
-              cord.z -= 0.1;
-            }
-          });
-        } else if (creationTimer <= 0.1) {
+        positionCords[199].z += 0.15;
+        if (creationTimer > 1) {
+          setPlayDecay(true);
+          setPlayGrow(false);
+        }
+      } else if (playDecay === true) {
+        setCreationTimer((creationTimer) => creationTimer - 0.1);
+        // positionCords.forEach((cord) => {
+        //   console.log('cord', cord.z);
+        //   // if (cord.z < 0.2) {
+        //   //   cord.z = 0;
+        //   // } else {
+        //   //   cord.z -= 0.1;
+        //   // }
+        // });
+        if (creationTimer < -0.5) {
           setPlayDecay(false);
-          setCreationTimer(0);
         }
       }
+      // console.log("Play decay", playDecay);
       // console.log("creation timer", creationTimer);
     }, 100);
     return () => clearInterval(intervalId);
@@ -332,7 +345,7 @@ function BackgroundPlane() {
       <mesh
         onPointerMove={(e) => {
           setCreationTimer(() =>
-            creationTimer <= 1 ? creationTimer + 0.01 : creationTimer
+            creationTimer <= 0.8 ? creationTimer + 0.01 : 0.2
           );
           setPlayGrow(true);
           setPositionCord(new THREE.Vector3(e.uv.x, e.uv.y, creationTimer));
@@ -340,13 +353,12 @@ function BackgroundPlane() {
           setPositionCords((positionCords) => [...positionCords, positionCord]);
         }}
       >
-        <planeBufferGeometry args={[20, 20, 50, 50]} />
+        <planeBufferGeometry args={[20, 20]} />
         <explosionMaterial
           uTexture={texture}
           uCreationTimer={creationTimer}
           uPositionCords={positionCords}
         />
-        <OrbitControls />
       </mesh>
     </>
   );
@@ -358,9 +370,7 @@ function App() {
       <Suspense fallback={null}>
         <Canvas>
           <ambientLight />
-          {/* <OrbitControls /> */}
           <BackgroundPlane />
-          <Stats />
         </Canvas>
       </Suspense>
     </>
