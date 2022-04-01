@@ -71,7 +71,7 @@ const ExplosionMaterial = shaderMaterial(
 
         if( strengths[i] > 0.1 ){
           strengths[i] = 1.0;
-        } else if( strengths[i] < randomPoint * 0.1 ){
+        } else if( strengths[i] < randomPoint ){
           strengths[i] = 0.0; //this is the circle
         }
       }
