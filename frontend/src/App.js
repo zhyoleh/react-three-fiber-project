@@ -2,6 +2,7 @@ import "./canvas/canvas.css";
 import { Canvas, extend, useFrame } from "@react-three/fiber";
 import {
   shaderMaterial,
+  Stats,
   useTexture,
 } from "@react-three/drei";
 import glsl from "babel-plugin-glsl/macro";
@@ -55,13 +56,22 @@ const ExplosionMaterial = shaderMaterial(
 
       for( int i = 0; i < newArrayLength; i++)
       {
-        float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 4.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
+        // float stem = distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 4.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y));
+
+        
+
+        
+
+        float stem = (distance(vec2(vUv.x, (vUv.y - uPositionCords[i].y) * 4.0 + uPositionCords[i].y), vec2(uPositionCords[i].x, uPositionCords[i].y)));
+
 
         strengths[i] = stem / abs(uPositionCords[i].z);
 
-        if( strengths[i] > 0.1){
+        float randomPoint = random(vUv) ; 
+
+        if( strengths[i] > 0.1 ){
           strengths[i] = 1.0;
-        } else if( strengths[i] < 0.1){
+        } else if( strengths[i] < randomPoint * 0.1 ){
           strengths[i] = 0.0; //this is the circle
         }
       }
@@ -315,13 +325,13 @@ function BackgroundPlane() {
     const intervalId = setInterval(() => {
       if (playGrow === true) {
         setCreationTimer(() => creationTimer + 0.1);
-        positionCords[199].z += 0.15;
+        positionCords[199].z += 0.1;
         if (creationTimer > 1) {
           setPlayDecay(true);
           setPlayGrow(false);
         }
       } else if (playDecay === true) {
-        setCreationTimer((creationTimer) => creationTimer - 0.1);
+        setCreationTimer((creationTimer) => creationTimer - 0.2);
         // positionCords.forEach((cord) => {
         //   console.log('cord', cord.z);
         //   // if (cord.z < 0.2) {
@@ -330,7 +340,7 @@ function BackgroundPlane() {
         //   //   cord.z -= 0.1;
         //   // }
         // });
-        if (creationTimer < -0.5) {
+        if (creationTimer < 0) {
           setPlayDecay(false);
         }
       }
@@ -371,6 +381,7 @@ function App() {
         <Canvas>
           <ambientLight />
           <BackgroundPlane />
+          <Stats />
         </Canvas>
       </Suspense>
     </>
